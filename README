@@ -1,4 +1,9 @@
-This is your new Play application
+Teepei for daddy
 =====================================
 
-This file will be packaged with your application, when using `play dist`.
+# Get Started
+Modify `fabfile/__init__.py` then execute fab!
+```
+$fab app.deploy
+```
+
