@@ -1,0 +1,21 @@
+@(whoami:String, partner:String)(implicit r: RequestHeader)
+
+@main("こんにちは！", List("http://cdn.peerjs.com/0.3/peer.js", routes.Assets.at("javascripts/wsroom.js").toString) ) {
+
+<div id="partner" value="@partner"></div>
+<div id="whoami" value="@whoami"></div>
+
+<button ></button>
+
+<br/>
+
+<video id="video-capture" ></video>
+
+<br/>
+
+<video id="video-receiver" ></video>
+
+<br/>
+
+<button id="btn-capture-stop"></button>
+}

@@ -1,0 +1,18 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+GET     /rooms/:user                controllers.Application.room(user)
+GET     /clear                      controllers.Application.clear
+
+# javascript routing
+GET     /assets/javascripts/routes	controllers.Application.javascriptRoutes
+
+# Map websocket
+GET		/ws/:user			        controllers.Websocket.stream(user)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
