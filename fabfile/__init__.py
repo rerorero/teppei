@@ -18,4 +18,5 @@ env.localsnap_path = env.pwd + "/target/universal/" + env.snap_name + ".zip"
 env.delivered_dir = "/opt/" + env.app
 env.deploy_dir = env.delivered_dir + "/" + env.snap_name
 env.logpath = "/var/log/" + env.app + ".log"
+env.image_dir = "/var/images"
 

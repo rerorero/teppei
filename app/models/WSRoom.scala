@@ -27,11 +27,11 @@ object ClientMessage {
       "msg" -> msg
       )
   
-  // def commitpic(from:User) = Json.obj(
-  //     "kind" -> "commitPic",
-  //     "from" -> from.toJson
-  //     )
-  //
+  def commitpic(from:String) = Json.obj(
+      "kind" -> "commitPic",
+      "from" -> from
+      )
+
   // def picAdded(picture:Picture) = Json.obj(
   //     "kind" -> "picAdded",
   //     "pic" -> picture.toJson,
@@ -98,7 +98,7 @@ object WSRoom {
             //     needEcho <- (jsval \ "echo").asOpt[Boolean]
             //   }yield mediator ! Capture(userid, data, needEcho)
             // take photo 
-            // case Some("commitPic") => (jsval \ "to").asOpt[String].map( to => mediator ! CommitPicture(userid,to.toLong) )
+            case Some("commitPic") => (jsval \ "from").asOpt[String].map( from => mediator ! CommitPicture(from) )
             //
             case _ => Logger.error("unknown kind"+jsval)
           }
@@ -169,14 +169,12 @@ class WSRoom extends Actor {
    * broadcast the room of user specified
    */
   def broadcast(sender:String, includeSelf:Boolean, sendee:(Channel[JsValue])=>Unit ) = {
-    sessions.find(_.username == sender).map { userSession =>
-      val roomers = if (includeSelf) {
-        sessions
-      }else{
-        sessions.filter(_.username != userSession.username)
-      }
-      roomers.foreach(_.channel.map(sendee(_)))
+    val roomers = if (includeSelf) {
+      sessions
+    }else{
+      sessions.filter(_.username != sender)
     }
+    roomers.foreach(_.channel.map(sendee(_)))
   }
   
   /**
@@ -229,17 +227,12 @@ class WSRoom extends Actor {
       broadcast(session.username, false, _.push(message))
     }
     
-    // // request to take picture 
-    // case CommitPicture(uidSrc, uidDest) => {
-    //   for{
-    //     from <- users.findById(uidSrc)
-    //     to <- users.findById(uidDest)
-    //   }yield{
-    //     val message = ClientMessage.commitpic(from)
-    //     unicast(to.id.get, _.push(message))
-    //   }
-    // }
-    //
+    // request to take picture 
+    case CommitPicture(from) => {
+      val message = ClientMessage.commitpic(from)
+      broadcast(from, false, _.push(message))
+    }
+
     // // picture saving completed
     // case PictureAdded(pic) => {
     //   val message = ClientMessage.picAdded(pic)
@@ -286,7 +279,7 @@ case class MediatorFailed(msg: String)
 case class Connected(session:UserSession)
 case class Joined(session:UserSession)
 case class ExistsResult(user:Option[String])
-// case class CommitPicture(uidSrc:Long, uidDest:Long)
+case class CommitPicture(from:String)
 // case class Capture(uid:Long, data:String, needEcho:Boolean)
 case class Clean()
 

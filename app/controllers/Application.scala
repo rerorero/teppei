@@ -1,8 +1,13 @@
 package controllers
 
+import play.api.libs.json._
 import play.api._
 import play.api.mvc._
 import models._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
+import models.Images.imageToFileMapper
 
 object Application extends Controller {
 
@@ -19,13 +24,44 @@ object Application extends Controller {
     Ok(views.html.index(Some("クリアしました。")))
   }
 
+  def addImage = Action.async(parse.multipartFormData) {implicit request=>
+    Future {
+      request.body.file("image").flatMap { 
+        Images.add(_)
+      }.map{ img =>
+        Ok(Json.obj("name" -> img.filename))
+      }.getOrElse {
+        Logger.info("Bad Request hx:")
+        BadRequest
+      }
+    }
+  }
+
+  def getImage(filename:String) = Action {
+    Images.get(filename).map { img => 
+      Ok.sendFile(
+        content = img,
+        inline = true
+        )
+    }.getOrElse {
+      Logger.info("Bad Request Image: "+filename)
+      NotFound
+    }
+  }
+
+  def listImages() = Action {
+    NotFound
+  }
+
   // for javascript routes
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(Routes.javascriptRouter("jsRoutes")(
        routes.javascript.Websocket.stream,
-       routes.javascript.Application.index
+       routes.javascript.Application.index,
+       routes.javascript.Application.addImage,
+       routes.javascript.Application.getImage,
+       routes.javascript.Application.listImages
         )).as("text/javascript")
   }
-
 }

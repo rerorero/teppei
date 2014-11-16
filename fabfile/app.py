@@ -10,7 +10,7 @@ def deploy():
 
 @task
 def snap():
-  local('play clean comppile dist')
+  local('play clean compile dist')
 
 @task
 def deliver():
@@ -37,9 +37,10 @@ def stop():
       run("rm ./RUNNING_PID")
 
   # process でもチェック
-  check_cmd = "ps afx | grep 'play.core.server.NettyServer' | grep -v grep | awk '{print $1}'"
-  if run(check_cmd, warn_only=True).succeeded:
-    run(check_cmd + " | xargs kill -9")
+  with settings(warn_only=True):
+    check_cmd = "ps afx | grep 'play.core.server.NettyServer' | grep -v grep | awk '{print $1}'"
+    if run(check_cmd, warn_only=True).succeeded:
+      run(check_cmd + " | xargs kill -9")
 
 @task
 def log():

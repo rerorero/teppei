@@ -7,6 +7,12 @@ GET     /                           controllers.Application.index
 GET     /rooms/:user                controllers.Application.room(user)
 GET     /clear                      controllers.Application.clear
 
+# image
+POST     /images                     controllers.Application.addImage()
+GET     /images/:filename           controllers.Application.getImage(filename)
+GET     /images                     controllers.Application.listImages()
+
+
 # javascript routing
 GET     /assets/javascripts/routes	controllers.Application.javascriptRoutes
 

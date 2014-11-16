@@ -129,6 +129,7 @@ class CaptureCam extends CamView
     @capture.enabled = false
   
   takePhoto:(postUrl, callback)->
+    console.log 'add image url:'+postUrl
     data64 = @getCaptureBase64(1)
     return if data64 is null
     blobimg = @base64toBlob(data64)
@@ -246,25 +247,20 @@ $ ->
   if g_receiver?
     g_capture.setReadyToCall(g_receiver)
 
-  # # commit to take pic function
-  # commitPic = (uid) ->
-  #   console.log 'take others pic ' + uid
-  #   g_socket.send(JSON.stringify({
-  #     kind: 'commitPic'
-  #     to: uid
-  #   }))
-  #   # g_ui.setUserPicState(uid, true, 0)
+  # commit to take pic function
+  commitPic = (user) ->
+    console.log 'take pic from ' + user 
+    g_socket.send(JSON.stringify({
+      kind: 'commitPic'
+      from: user
+    }))
+    # g_ui.setUserPicState(uid, true, 0)
 
-  # takeMyPic = ->
-  #   return if g_capture.onShooting
-  #   rid = $('#room-id').attr('value')
-  #   uid = g_user.getId()
-  #   button = $(".user-li[value='#{uid}'] .take-pic")
-  #   # g_ui.setUserPicState(uid, true, 0)
-  #   button.attr('disabled', true)
-  #   url = jsRoutes.controllers.Api.addPicture(rid, uid).url
-  #   g_capture.takePhoto url, (result)->
-  #     button.attr('disabled', false)
+  takeMyPic = ->
+    return if g_capture.onShooting
+    url = jsRoutes.controllers.Application.addImage().url
+    g_capture.takePhoto url, (result)->
+      console.log 'take pic result: ' + result
 
   if g_socket?
     console.log 'socket has already opend'
@@ -319,9 +315,9 @@ $ ->
         #-----------------------------------------------
         # to take a photo
         #-----------------------------------------------
-        # when "commitPic"
-        #   console.log('[RX] commitPic :' + msg)
-        #   takeMyPic()
+        when "commitPic"
+          console.log('[RX] commitPic :' + msg)
+          takeMyPic()
 
         #-----------------------------------------------
         # photo added
@@ -362,21 +358,22 @@ $ ->
   #-----------------------
   # camera button
   #-----------------------
-  # $('.take-pic').live 'click', ->
-  #   button = $(this)
-  #   uid = button.attr('value')
-  #   rid = room_id.attr('value')
-  #   if uid is g_user.getId()
-  #     return if g_capture.onShooting
-  #     # g_ui.setUserPicState(uid, true, 0)
-  #     button.attr('disabled', true)
-  #     url = jsRoutes.controllers.Api.addPicture(rid, uid).url
-  #     g_capture.takePhoto url, (result)->
-  #       button.attr('disabled', false)
-  #   else
-  #     # g_ui.setUserPicState(uid, true, 0)
-  #     commitPic(uid)
-  #
+  $('#takepic').on 'click', ->
+    button = $(this)
+    button.attr('disabled', false)
+    commitPic($('#partner').attr('value'))
+    # uid = button.attr('value')
+    # rid = room_id.attr('value')
+    # if uid is g_user.getId()
+    #   return if g_capture.onShooting
+    #   # g_ui.setUserPicState(uid, true, 0)
+    #   button.attr('disabled', true)
+    #   url = jsRoutes.controllers.Api.addPicture(rid, uid).url
+    #   g_capture.takePhoto url, (result)->
+    #     button.attr('disabled', false)
+    # else
+      # g_ui.setUserPicState(uid, true, 0)
+
   # $('#shoot-all').click ->
   #   takeMyPic()
   #   if !g_capture.onShooting 

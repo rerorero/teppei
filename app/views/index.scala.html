@@ -2,8 +2,12 @@
 
 @main("どっち？", List.empty) {
 
-<a class="menu-btn" href='@routes.Application.room("papa")'>パパ</a> 
-<a class="menu-btn" href='@routes.Application.room("teppei")'>哲平</a> 
+<div id="main">
+<nav>
+  <a href="@routes.Application.room("papa")">パパ</a>
+  <a href="@routes.Application.room("teppei")">哲平</a>
+</nav>
+</div>
 
 <span>
 @message.map{ msg =>

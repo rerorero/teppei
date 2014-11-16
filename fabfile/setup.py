@@ -4,6 +4,7 @@ from fabric.api import *
 @task
 def do():
   package()
+  filesystem()
   network()
   reboot()
 
@@ -17,6 +18,10 @@ def package():
 
 def network():
   run("sed -i \"s/^HOSTNAME\=.*$/HOSTNAME=%s/g\" /etc/sysconfig/network" % env.hosts )
+
+def filesystem():
+  if exists(env.image_dir):
+    run("mkdir -p " + env.image_dir)
 
 def reboot():
   run("reboot")
