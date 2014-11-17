@@ -1,0 +1,13 @@
+@(images: List[Image])
+@import models.Image
+
+@main("哲平写真", List.empty) {
+<h1>写真</h1>
+<hr>
+<div id="image_main">
+  @images.map { img =>
+    <p><a href="@routes.Application.getImage(img.filename)">@img.filename</a></p>
+  }
+</div>
+
+}

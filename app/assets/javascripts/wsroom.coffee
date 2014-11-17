@@ -100,7 +100,7 @@ class CaptureCam extends CamView
       console.log 'roundtrip='+roundtrip
 
   startCapture:->
-    navigator.getUserMedia({video: true, audio: true, toString: ()-> "video, audio" },
+    navigator.getUserMedia({video: true, audio: false, toString: ()-> "video, audio" },
       (stream)=>
         @camView.autoplay = true
         @camView.src = window.URL.createObjectURL(stream)
@@ -162,7 +162,7 @@ class CaptureCamRTC extends CaptureCam
       console.log 'RTC closed:'
       @stopCall()
 
-  uidToPeerId:(uid)-> 'remopeer_'+uid
+  uidToPeerId:(uid)-> 'teppe_'+uid
 
   onStreamStart:->
     # start call
@@ -361,7 +361,7 @@ $ ->
   $('#takepic').on 'click', ->
     button = $(this)
     button.attr('disabled', false)
-    commitPic($('#partner').attr('value'))
+    commitPic(g_user)
     # uid = button.attr('value')
     # rid = room_id.attr('value')
     # if uid is g_user.getId()

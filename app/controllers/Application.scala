@@ -50,7 +50,12 @@ object Application extends Controller {
   }
 
   def listImages() = Action {
-    NotFound
+    Images.list().map { images =>
+      Ok(views.html.images(images))
+    }.getOrElse {
+      Logger.info("failed to list images")
+      NotFound
+    }
   }
 
   // for javascript routes
