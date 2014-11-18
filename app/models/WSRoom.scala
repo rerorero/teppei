@@ -104,7 +104,7 @@ object WSRoom {
           }
           
         }.map { _ =>
-          Logger.debug(s"websocket closed : [$user]")
+          Logger.debug(s" --- websocket closed --- : [$user]")
           mediator ! Leave(user)
         }
         
@@ -216,6 +216,7 @@ class WSRoom extends Actor {
     
     // users going to leave from the room
     case Leave(user:String)  => {
+      Logger.info("leave:"+user)
       val message = ClientMessage.left(user)
       broadcast(user, false, _.push(message))
       removeUserSession(user)
@@ -223,12 +224,14 @@ class WSRoom extends Actor {
 
     // notify room that user has joined
     case Joined(session) => {
+      Logger.info("joined:"+session.username)
       val message = ClientMessage.joined(session.username)
       broadcast(session.username, false, _.push(message))
     }
     
     // request to take picture 
     case CommitPicture(from) => {
+      Logger.info("commit picture from:"+from)
       val message = ClientMessage.commitpic(from)
       broadcast(from, false, _.push(message))
     }
@@ -261,6 +264,7 @@ class WSRoom extends Actor {
     }
 
     case Exists => {
+      Logger.info("exists")
       sender ! ExistsResult(sessions.headOption.map{_.username})
     }
   }

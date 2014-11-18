@@ -29,6 +29,7 @@ object Application extends Controller {
       request.body.file("image").flatMap { 
         Images.add(_)
       }.map{ img =>
+        Logger.info("image added:"+img.filename)
         Ok(Json.obj("name" -> img.filename))
       }.getOrElse {
         Logger.info("Bad Request hx:")
