@@ -160,7 +160,7 @@ class CaptureCamRTC extends CaptureCam
       console.log 'RTC open succeed:'
     @peer.on 'close', =>
       console.log 'RTC closed:'
-      @stopCall()
+      #@stopCall()
 
   uidToPeerId:(uid)-> 'teppe_'+uid
 
@@ -200,10 +200,13 @@ class CaptureCamRTC extends CaptureCam
         source = window.URL.createObjectURL(remoteStream)
         @receiver.setSrc(source)
 
-  stopCall:->
+  stopCall:(destroy = false)->
+    console.log "stop calling."
     if @call?
+      console.log "call closing."
       @call.close()
       @call = null
+    @peer.destroy() if destroy
     @receiver = null
 
 #----------------------------------------------------
@@ -340,6 +343,19 @@ $ ->
 
         when "error"
           console.error(msg.msg)
+
+        when "kick"
+          console.log("kicked!! "+msg.user)
+          console.log(g_user)
+          if msg.user == g_user
+            g_socket.close(4500, 'onUnload') if g_socket?
+            g_capture.stopCall(true) if g_capture?
+            console.log("i had been kicked..")
+          else
+            console.log("receiver stop")
+            if g_capture?
+              g_capture.stopCall()
+              g_receiver = null
 
         else
           console.error('[RX] unknown :' + e.data)

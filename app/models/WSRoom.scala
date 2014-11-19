@@ -53,6 +53,12 @@ object ClientMessage {
       "kind" -> "left",
       "user" -> user
       )
+
+  def kick(user:String) = Json.obj(
+    "kind" -> "kick",
+    "user" -> user
+    )
+
   
   // def captureData(from:User, data:String) = Json.obj(
   //     "kind" -> "capture",
@@ -116,6 +122,10 @@ object WSRoom {
 
   def clear = {
     mediator ? Clean
+  }
+
+  def kick(user:String) = {
+    mediator ? Kick(user)
   }
 
   def exists = {
@@ -267,6 +277,11 @@ class WSRoom extends Actor {
       Logger.info("exists")
       sender ! ExistsResult(sessions.headOption.map{_.username})
     }
+
+    case Kick(user) => {
+      val message = ClientMessage.kick(user)
+      broadcast(user, true, _.push(message))
+    }
   }
 }
 
@@ -277,6 +292,7 @@ case class Leave(user: String)
 // case class PictureAdded(picture:Picture)
 // case class PictureRemoved(picture:Picture)
 case class Exists()
+case class Kick(user:String)
 
 // response
 case class MediatorFailed(msg: String)

@@ -59,6 +59,12 @@ object Application extends Controller {
     }
   }
 
+  def kick(user:String) = Action {
+    Logger.info("try to kick "+user)
+    WSRoom.kick(user)
+    Ok(views.html.index(Some("kickしました。")))
+  }
+
   // for javascript routes
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._

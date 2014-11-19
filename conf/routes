@@ -11,6 +11,7 @@ GET     /clear                      controllers.Application.clear
 POST     /images                     controllers.Application.addImage()
 GET     /images/:filename           controllers.Application.getImage(filename)
 GET     /images                     controllers.Application.listImages()
+GET     /kick/:user                 controllers.Application.kick(user)
 
 
 # javascript routing
