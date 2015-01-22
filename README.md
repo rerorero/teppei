@@ -1,8 +1,6 @@
-Teepei for daddy
-=====================================
+# Papa watches you always
 
-# Get Started
-Modify `fabfile/__init__.py` then execute fab!
+Configure `fabfile/__init__.py` then execute fab.
 ```
 $fab app.deploy
 ```
